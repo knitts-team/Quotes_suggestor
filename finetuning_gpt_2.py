@@ -50,14 +50,30 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
-# !pip install wandb
-# !wandb login
-# log in key : 9d5065a2de6cbad8a4869ecf568cf7277676f833
-
 wandb.init(project="finetuning-GPT-2", entity="team-knitts")
 
 
+#############################
+#######   variables  ########
+#############################
+
 root_path = 'H:/sem8/nlp/dataset/train/train/'
+
+model_dir = 'H:/sem8/nlp/implementation/checkpoint/models/'
+load_model = False
+
+
+config = {
+    'learning_rate' : 1e-3, # to be experimented
+    'batch_size' : 4, # to be changed [crashing if high]
+    'epochs' : 10,
+    'betas': [0.9, 0.999]
+}
+
+
+##############################
+
+
 text_file_names = os.listdir(root_path)
 dataset = []
 
@@ -116,13 +132,6 @@ print('Using device:', device)
 
 tokenizer = AutoTokenizer.from_pretrained("abinayam/gpt-2-tamil")
 tokenizer.pad_token = 295 # to be changed
-
-config = {
-    'learning_rate' : 1e-3, # to be experimented
-    'batch_size' : 3, # to be changed [crashing if high]
-    'epochs' : 10,
-    'betas': [0.9, 0.999]
-}
 
 wandb.config = config
 
@@ -187,8 +196,6 @@ class CustomGPTModel(nn.Module):
 
 
 # model_dir = '/content/drive/My Drive/model/'
-model_dir = 'H:/sem8/nlp/implementation/checkpoint/models/'
-load_model = False
 
 try:
   if(load_model == False):
@@ -244,7 +251,7 @@ for epoch in range(epochs):
           'model_state_dict' : model.state_dict(),
           'optimizer_state_dict' : optimizer.state_dict(),
           'loss' : criterion,
-      }, 'H:/sem8/nlp/implementation/checkpoint/models/' + 'model' + date_time + '.pth')
+      }, model_dir + 'model' + date_time + '.pth')
 
     
 
